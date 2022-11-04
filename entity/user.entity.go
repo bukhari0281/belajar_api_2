@@ -5,4 +5,5 @@ type User struct {
 	Name     string `gorm:"type:varchar(100)" json:"-"`
 	Email    string `gorm:"type:varchar(100);unique;" json:"-"`
 	Password string `gorm:"type:varchar(100)" json:"-"`
+	Age      int64  `gorm:"type:int(10)" json:"-"`
 }
