@@ -32,6 +32,7 @@ func SetupDatabaseConnection() *gorm.DB {
 		&entity.User{},
 		&entity.Product{},
 		&entity.Photo{},
+		&entity.Comments{},
 	)
 	println("Database connected!")
 	return db

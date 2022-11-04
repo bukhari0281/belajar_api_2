@@ -15,15 +15,18 @@ var (
 	userRepo       repo.UserRepository    = repo.NewUserRepo(db)
 	productRepo    repo.ProductRepository = repo.NewProductRepo(db)
 	photoRepo      repo.PhotoRepository   = repo.NewPhotoRepo(db)
+	commentRepo    repo.CommentRepository = repo.NewCommentRepo(db)
 	authService    service.AuthService    = service.NewAuthService(userRepo)
 	jwtService     service.JWTService     = service.NewJWTService()
 	userService    service.UserService    = service.NewUserService(userRepo)
 	productService service.ProductService = service.NewProductService(productRepo)
 	photoService   service.PhotoService   = service.NewPhotoService(photoRepo)
+	commentService service.CommentService = service.NewCommentService(commentRepo)
 	authHandler    v1.AuthHandler         = v1.NewAuthHandler(authService, jwtService, userService)
 	userHandler    v1.UserHandler         = v1.NewUserHandler(userService, jwtService)
 	productHandler v1.ProductHandler      = v1.NewProductHandler(productService, jwtService)
 	photoHandler   v1.PhotoHandler        = v1.NewPhotoHandler(photoService, jwtService)
+	commentHandler v1.CommentHandler      = v1.NewCommentHandler(commentService, jwtService)
 )
 
 func main() {
@@ -58,6 +61,15 @@ func main() {
 		photoRoutes.GET("/:id", photoHandler.FindOnePhotoByID)
 		photoRoutes.PUT("/:id", photoHandler.UpdatePhoto)
 		photoRoutes.DELETE("/:id", photoHandler.DeletePhoto)
+	}
+
+	commentRoutes := server.Group("api/comment", middleware.AuthorizeJWT(jwtService))
+	{
+		commentRoutes.GET("/", commentHandler.All)
+		commentRoutes.POST("/", commentHandler.CreateComment)
+		commentRoutes.GET("/:id", commentHandler.FindOneCommentByID)
+		commentRoutes.PUT("/:id", commentHandler.UpdateComment)
+		commentRoutes.DELETE("/:id", commentHandler.DeleteComment)
 	}
 
 	checkRoutes := server.Group("api/check")
